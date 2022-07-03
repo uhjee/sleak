@@ -1,18 +1,77 @@
-import React, { FC, useCallback, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Button, Form, Header, Input, Label, LinkContainer } from './styles';
+import useInput from '@hooks/useInput';
+import React, { ChangeEvent, FC, FormEvent, useCallback, useState } from 'react';
+import { Link, Navigate } from 'react-router-dom';
+import { Button, Error, Form, Header, Input, Label, LinkContainer, Success } from './styles';
+import axios from 'axios';
+import useSWR from 'swr';
+import fetcher from '@utils/fetcher';
 
 const SignUp: FC = () => {
-  const [email] = useState('');
-  const [nickname] = useState('');
-  const [password] = useState('');
-  const [passwordCheck] = useState('');
+  const { data, error, isValidating } = useSWR('http://localhost:3095/api/users', fetcher);
 
-  const onChangeEmail = useCallback(() => {}, []);
-  const onChangeNickname = useCallback(() => {}, []);
-  const onChangePassword = useCallback(() => {}, []);
-  const onChangePasswordCheck = useCallback(() => {}, []);
-  const onSubmit = useCallback(() => {}, []);
+  const [email, onChangeEmail] = useInput('');
+  const [nickname, onChangeNickname] = useInput('');
+  const [password, setPassword] = useState('');
+  const [passwordCheck, setPasswordCheck] = useState('');
+  const [missmatchError, setMissmatchError] = useState(false);
+
+  const [signUpError, setSignUpError] = useState('');
+  const [signUpSuccess, setSignUpSuccess] = useState(false);
+
+  const onChangePassword = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setPassword(e.target.value);
+      setMissmatchError(!!passwordCheck && e.target.value !== passwordCheck);
+    },
+    [passwordCheck],
+  );
+
+  const onChangePasswordCheck = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      setPasswordCheck(e.target.value);
+      setMissmatchError(e.target.value !== password);
+    },
+    [password],
+  );
+
+  const onSubmit = useCallback(
+    (e: FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+
+      // 비동기 요청 전에 관련 state 초기화
+      setSignUpError('');
+      setSignUpSuccess(false);
+
+      if (!missmatchError && nickname && email) {
+        axios
+          .post('/api/users', {
+            email,
+            nickname,
+            password,
+          })
+          .then((res) => {
+            console.log('서버로 회원가입 api req');
+            console.log({ res });
+            setSignUpSuccess(true);
+          })
+          .catch((error) => {
+            console.log(error.response);
+            setSignUpError(error.response.data);
+          })
+          .finally(() => {});
+      }
+    },
+    [email, nickname, password, passwordCheck, missmatchError],
+  );
+
+  if (isValidating) {
+    return <div>로딩중...</div>;
+  }
+
+  if (data) {
+    // SWR로 api 요청한 결과에 로그인된 회원정보가 있다면, routing
+    return <Navigate to="/workspace/channel" />;
+  }
 
   return (
     <div id="container">
@@ -47,16 +106,16 @@ const SignUp: FC = () => {
               onChange={onChangePasswordCheck}
             />
           </div>
-          {/* {mismatchError && <Error>비밀번호가 일치하지 않습니다.</Error>}
-          {!nickname && <Error>닉네임을 입력해주세요.</Error>}
+          {missmatchError && <Error>비밀번호가 일치하지 않습니다.</Error>}
+          {email && password && passwordCheck && !nickname && <Error>닉네임을 입력해주세요.</Error>}
           {signUpError && <Error>{signUpError}</Error>}
-          {signUpSuccess && <Success>회원가입되었습니다! 로그인해주세요.</Success>} */}
+          {signUpSuccess && <Success>회원가입되었습니다! 로그인해주세요.</Success>}
         </Label>
         <Button type="submit">회원가입</Button>
       </Form>
       <LinkContainer>
         이미 회원이신가요?&nbsp;
-        <Link to="/login">로그인 하러가기</Link>
+        <Link to="/login">로그인 하기</Link>
       </LinkContainer>
     </div>
   );

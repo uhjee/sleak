@@ -1,17 +1,12 @@
 import path from 'path';
 import ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin';
-import webpack, { Configuration as WebpackConfiguration } from 'webpack';
-import { Configuration as WebpackDevServerConfiguration } from 'webpack-dev-server';
+import webpack from 'webpack';
 import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
 // import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 
-interface Configuration extends WebpackConfiguration {
-  devServer?: WebpackDevServerConfiguration;
-}
-
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
-const config: Configuration = {
+const config: webpack.Configuration = {
   name: 'sleact',
   mode: isDevelopment ? 'development' : 'production',
   devtool: !isDevelopment ? 'hidden-source-map' : 'eval',
@@ -80,11 +75,7 @@ const config: Configuration = {
   devServer: {
     historyApiFallback: true, // react router
     port: 3090,
-    devMiddleware: { publicPath: '/dist' },
-    static: {
-      directory: path.join(__dirname),
-    },
-    hot: true,
+    publicPath: '/dist/',
     proxy: {
       '/api/': {
         target: 'http://localhost:3095',
