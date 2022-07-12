@@ -5,14 +5,14 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 // code splitting - pages directory 단위 기준
 const LogIn = loadable(() => import('@pages/Login'));
 const SignUp = loadable(() => import('@pages/SignUp'));
-const Channel = loadable(() => import('@pages/Channel'));
+const Workspace = loadable(() => import('@layouts/Workspace'));
 
 const App = () => {
   return (
     <Routes>
       <Route path="/login" element={<LogIn />} />
       <Route path="/signup" element={<SignUp />} />
-      <Route path="/workspace/channel" element={<Channel />} />
+      <Route path="/workspace/*" element={<Workspace />} />
       <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>
   );
