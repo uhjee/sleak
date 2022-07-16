@@ -1,10 +1,10 @@
 import useInput from '@hooks/useInput';
+import fetcher from '@utils/fetcher';
+import axios from 'axios';
 import React, { ChangeEvent, FC, FormEvent, useCallback, useState } from 'react';
 import { Link, Navigate } from 'react-router-dom';
-import { Button, Error, Form, Header, Input, Label, LinkContainer, Success } from './styles';
-import axios from 'axios';
 import useSWR from 'swr';
-import fetcher from '@utils/fetcher';
+import { Button, Error, Form, Header, Input, Label, LinkContainer, Success } from './styles';
 
 const SignUp: FC = () => {
   const { data, error, isValidating } = useSWR('http://localhost:3095/api/users', fetcher);
@@ -70,7 +70,7 @@ const SignUp: FC = () => {
 
   if (data) {
     // SWR로 api 요청한 결과에 로그인된 회원정보가 있다면, routing
-    return <Navigate to="/workspace/channel" />;
+    return <Navigate to="/workspace/sleact/channel/일반" />;
   }
 
   return (

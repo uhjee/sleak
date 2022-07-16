@@ -20,12 +20,12 @@ import {
 } from '@layouts/Workspace/styles';
 import loadable from '@loadable/component';
 import { Button, Input, Label } from '@pages/SignUp/styles';
-import { IUser, IWorkspace } from '@typings/db';
+import { IChannel, IUser, IWorkspace } from '@typings/db';
 import fetcher from '@utils/fetcher';
 import axios from 'axios';
 import gravatar from 'gravatar';
 import React, { FormEvent, MouseEvent, useCallback, useState, VFC } from 'react';
-import { Route, Routes, useNavigate } from 'react-router';
+import { Route, Routes, useNavigate, useParams } from 'react-router';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -47,6 +47,11 @@ const Workspace: VFC = () => {
   const [showWorkspaceModal, setShowWorkspaceModal] = useState(false);
   const [showCreateChannelModal, setShowCreateChannelModal] = useState(false);
 
+  const { workspace } = useParams();
+
+  /**
+   * [swr] userData 받아오기
+   */
   const {
     data: userData,
     error,
@@ -55,6 +60,15 @@ const Workspace: VFC = () => {
     dedupingInterval: 2000,
     loadingTimeout: 900000,
   });
+
+  /**
+   * [swr] channelData 받아오기
+   * 조건부 요청: userData 가 없다면, null로 요청
+   */
+  const { data: channelData } = useSWR<IChannel[]>(
+    userData ? `http://localhost:3095/api/workspaces/${workspace}/channels` : null,
+    fetcher,
+  );
 
   /**
    * 로그아웃 버튼 클릭 핸들러
@@ -187,17 +201,20 @@ const Workspace: VFC = () => {
           <MenuScroll>
             <Menu show={showWorkspaceModal} onCloseModal={toggleWorkspaceModal} style={{ top: 95, left: 80 }}>
               <WorkspaceModal>
-                <h2>Selact</h2>
+                <h2>{workspace}</h2>
                 <button onClick={onClickAddChannel}>채널 만들기</button>
                 <button onClick={onLogout}>로그아웃</button>
               </WorkspaceModal>
             </Menu>
+            {channelData?.map((channel) => (
+              <div key={channel.id}>{channel.name}</div>
+            ))}
           </MenuScroll>
         </Channels>
         <Chats>
           <Routes>
-            <Route path="channel" element={<Channel />} />
-            <Route path="dm" element={<DirectMessage />} />
+            <Route path="channel/:channel" element={<Channel />} />
+            <Route path="dm/:id" element={<DirectMessage />} />
           </Routes>
         </Chats>
       </WorkspaceWrapper>

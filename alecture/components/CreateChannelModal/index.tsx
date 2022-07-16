@@ -1,7 +1,13 @@
 import Modal from '@components/Modal';
 import useInput from '@hooks/useInput';
 import { Button, Input, Label } from '@pages/SignUp/styles';
-import React, { Dispatch, FC, SetStateAction, useCallback } from 'react';
+import { IChannel, IUser } from '@typings/db';
+import fetcher from '@utils/fetcher';
+import axios from 'axios';
+import React, { Dispatch, FC, FormEvent, SetStateAction, useCallback } from 'react';
+import { useParams } from 'react-router';
+import { toast } from 'react-toastify';
+import useSWR from 'swr';
 
 interface CreateChannelModalProps {
   show: boolean;
@@ -12,7 +18,55 @@ interface CreateChannelModalProps {
 const CreateChannelModal: FC<CreateChannelModalProps> = ({ onCloseModal, show = false, setShowCreateChannelModal }) => {
   const [newChannel, onChangeNewChannel, setNewChannel] = useInput('');
 
-  const onCreateChannel = useCallback(() => {}, []);
+  // useParams :: router paramter 가져오는 훅
+  const { workspace } = useParams<{ workspace: string; channel: string }>();
+
+  /**
+   * [swr] userData 받아오기
+   */
+  const {
+    data: userData,
+    error,
+    mutate,
+  } = useSWR<IUser | false>('http://localhost:3095/api/users', fetcher, {
+    dedupingInterval: 2000,
+    loadingTimeout: 900000,
+  });
+
+  /**
+   * [swr] channelData 받아오기
+   * 조건부 요청: userData 가 없다면, null로 요청
+   */
+  const { data: channelData, mutate: mutateChannelData } = useSWR<IChannel[]>(
+    userData ? `http://localhost:3095/api/workspaces/${workspace}/channels` : null,
+    fetcher,
+  );
+
+  const onCreateChannel = useCallback(
+    async (e: FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      try {
+        await axios.post(
+          `/api/workspaces/${workspace}/channels`,
+          {
+            name: newChannel,
+          },
+          {
+            withCredentials: true,
+          },
+        );
+        
+        // swr로 전역관리 - 다른 컴포넌트에도 브로드캐스팅
+        mutateChannelData();
+        setShowCreateChannelModal(false);
+        setNewChannel('');
+      } catch (error: any) {
+        console.dir(error);
+        toast.error(error.response?.data, { position: 'bottom-center' });
+      }
+    },
+    [newChannel],
+  );
 
   return (
     <Modal show={show} onCloseModal={onCloseModal}>

@@ -1,5 +1,5 @@
 import useInput from '@hooks/useInput';
-import { Success, Form, Error, Label, Input, LinkContainer, Button, Header } from '@pages/SignUp/styles';
+import { Button, Error, Form, Header, Input, Label, LinkContainer } from '@pages/SignUp/styles';
 import fetcher from '@utils/fetcher';
 // import fetcher from '@utils/fetcher';
 import axios from 'axios';
@@ -14,7 +14,8 @@ const LogIn: FC = () => {
   const [logInError, setLogInError] = useState(false);
   const [email, onChangeEmail] = useInput('');
   const [password, onChangePassword] = useInput('');
-  const onSubmit = useCallback(
+
+  const onLogin = useCallback(
     (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
       setLogInError(false);
@@ -40,7 +41,7 @@ const LogIn: FC = () => {
 
   if (data) {
     // SWR로 api 요청한 결과에 로그인된 회원정보가 있다면, routing
-    return <Navigate to="/workspace/channel" />;
+    return <Navigate to="/workspace/sleact/channel/일반" />;
   }
 
   if (isValidating) {
@@ -56,7 +57,7 @@ const LogIn: FC = () => {
   return (
     <div id="container">
       <Header>Sleact</Header>
-      <Form onSubmit={onSubmit}>
+      <Form onSubmit={onLogin}>
         <Label id="email-label">
           <span>이메일 주소</span>
           <div>
