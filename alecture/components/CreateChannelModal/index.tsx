@@ -24,11 +24,7 @@ const CreateChannelModal: FC<CreateChannelModalProps> = ({ onCloseModal, show = 
   /**
    * [swr] userData 받아오기
    */
-  const {
-    data: userData,
-    error,
-    mutate,
-  } = useSWR<IUser | false>('http://localhost:3095/api/users', fetcher, {
+  const { data: userData } = useSWR<IUser | false>('http://localhost:3095/api/users', fetcher, {
     dedupingInterval: 2000,
     loadingTimeout: 900000,
   });
@@ -55,7 +51,7 @@ const CreateChannelModal: FC<CreateChannelModalProps> = ({ onCloseModal, show = 
             withCredentials: true,
           },
         );
-        
+
         // swr로 전역관리 - 다른 컴포넌트에도 브로드캐스팅
         mutateChannelData();
         setShowCreateChannelModal(false);

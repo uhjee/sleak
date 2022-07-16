@@ -1,4 +1,6 @@
 import CreateChannelModal from '@components/CreateChannelModal';
+import InviteChannelModal from '@components/InviteChannelModal';
+import InviteWorkspaceModal from '@components/InviteWorkspaceModal';
 import Menu from '@components/Menu';
 import Modal from '@components/Modal';
 import useInput from '@hooks/useInput';
@@ -41,11 +43,14 @@ const Workspace: VFC = () => {
   const [showCreateWorkspaceModal, setShowCreateWorkspaceModal] = useState(false);
 
   // workspace 추가 모달 form데이터
+  // TODO:: 컴포넌트 분리 필요
   const [newWorkspace, onChangeNewWorkspace, setNewWorkspace] = useInput('');
   const [newUrl, onChangeNewUrl, setNewUrl] = useInput('');
 
   const [showWorkspaceModal, setShowWorkspaceModal] = useState(false);
   const [showCreateChannelModal, setShowCreateChannelModal] = useState(false);
+  const [showInviteWorkspaceModal, setShowInviteWorkspaceModal] = useState(false);
+  const [showInviteChannelModal, setShowInviteChannelModal] = useState(false);
 
   const { workspace } = useParams();
 
@@ -89,8 +94,18 @@ const Workspace: VFC = () => {
     setShowUserMenu((prev) => !prev);
   }, []);
 
+  /**
+   * 워크스페이스 생성 모달 활성화
+   */
   const onClickCreateWorkspace = useCallback(() => {
     setShowCreateWorkspaceModal(true);
+  }, []);
+
+  /**
+   * 워크스페이스 사용자 초대 모달 활성화
+   */
+  const onClickInviteWorkspace = useCallback(() => {
+    setShowInviteWorkspaceModal(true);
   }, []);
 
   /**
@@ -99,6 +114,8 @@ const Workspace: VFC = () => {
   const onCloseModal = useCallback(() => {
     setShowCreateWorkspaceModal(false);
     setShowCreateChannelModal(false);
+    setShowInviteWorkspaceModal(false);
+    setShowInviteChannelModal(false);
   }, []);
 
   /**
@@ -190,7 +207,7 @@ const Workspace: VFC = () => {
         <Workspaces>
           {userData?.Workspaces &&
             userData?.Workspaces.map((ws: IWorkspace) => (
-              <Link key={ws.id} to={`/workspace/${ws.url}/chnnel/일반`}>
+              <Link key={ws.id} to={`/workspace/${ws.url}/channel/일반`}>
                 <WorkspaceButton>{ws.name.slice(0, 1).toUpperCase()}</WorkspaceButton>
               </Link>
             ))}
@@ -202,6 +219,7 @@ const Workspace: VFC = () => {
             <Menu show={showWorkspaceModal} onCloseModal={toggleWorkspaceModal} style={{ top: 95, left: 80 }}>
               <WorkspaceModal>
                 <h2>{workspace}</h2>
+                <button onClick={onClickInviteWorkspace}>워크스페이스에 사용자 초대</button>
                 <button onClick={onClickAddChannel}>채널 만들기</button>
                 <button onClick={onLogout}>로그아웃</button>
               </WorkspaceModal>
@@ -213,8 +231,8 @@ const Workspace: VFC = () => {
         </Channels>
         <Chats>
           <Routes>
-            <Route path="channel/:channel" element={<Channel />} />
-            <Route path="dm/:id" element={<DirectMessage />} />
+            <Route path="/channel/:channel" element={<Channel />} />
+            <Route path="/dm/:id" element={<DirectMessage />} />
           </Routes>
         </Chats>
       </WorkspaceWrapper>
@@ -239,6 +257,20 @@ const Workspace: VFC = () => {
         show={showCreateChannelModal}
         onCloseModal={onCloseModal}
         setShowCreateChannelModal={setShowCreateChannelModal}
+      />
+
+      {/* 워크스페이스 사용자 초대 모달 */}
+      <InviteWorkspaceModal
+        show={showInviteWorkspaceModal}
+        onCloseModal={onCloseModal}
+        setShowInviteWorkspceModal={setShowInviteWorkspaceModal}
+      />
+
+      {/* 채널 사용자 초대 모달 */}
+      <InviteChannelModal
+        show={showInviteChannelModal}
+        onCloseModal={onCloseModal}
+        setShowInviteChannelModal={setShowInviteChannelModal}
       />
     </div>
   );
