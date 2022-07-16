@@ -3,7 +3,7 @@ import { Success, Form, Error, Label, Input, LinkContainer, Button, Header } fro
 import fetcher from '@utils/fetcher';
 // import fetcher from '@utils/fetcher';
 import axios from 'axios';
-import React, { FC, useCallback, useState } from 'react';
+import React, { FC, FormEvent, useCallback, useState } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import useSWR from 'swr';
 
@@ -15,7 +15,7 @@ const LogIn: FC = () => {
   const [email, onChangeEmail] = useInput('');
   const [password, onChangePassword] = useInput('');
   const onSubmit = useCallback(
-    (e: any) => {
+    (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
       setLogInError(false);
       axios

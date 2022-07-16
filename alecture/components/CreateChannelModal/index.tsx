@@ -1,0 +1,30 @@
+import Modal from '@components/Modal';
+import useInput from '@hooks/useInput';
+import { Button, Input, Label } from '@pages/SignUp/styles';
+import React, { Dispatch, FC, SetStateAction, useCallback } from 'react';
+
+interface CreateChannelModalProps {
+  show: boolean;
+  onCloseModal: () => void;
+  setShowCreateChannelModal: Dispatch<SetStateAction<boolean>>;
+}
+
+const CreateChannelModal: FC<CreateChannelModalProps> = ({ onCloseModal, show = false, setShowCreateChannelModal }) => {
+  const [newChannel, onChangeNewChannel, setNewChannel] = useInput('');
+
+  const onCreateChannel = useCallback(() => {}, []);
+
+  return (
+    <Modal show={show} onCloseModal={onCloseModal}>
+      <form onSubmit={onCreateChannel}>
+        <Label id="channel-label">
+          <span>채널</span>
+          <Input id="channel" value={newChannel} onChange={onChangeNewChannel} />
+        </Label>
+        <Button type="submit">생성하기</Button>
+      </form>
+    </Modal>
+  );
+};
+
+export default CreateChannelModal;
