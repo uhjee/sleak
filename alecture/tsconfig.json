@@ -3,7 +3,7 @@
     "esModuleInterop": true,
     "sourceMap": true,
     "lib": ["ES2020", "DOM"],
-    "jsx": "react",
+    "jsx": "react-jsx",
     "module": "esnext", // import, export
     "moduleResolution": "Node",
     "target": "es5", // es5로 변환

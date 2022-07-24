@@ -1,7 +1,7 @@
-import path from 'path';
 import ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin';
-import webpack from 'webpack';
 import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
+import path from 'path';
+import webpack from 'webpack';
 // import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
@@ -66,6 +66,7 @@ const config: webpack.Configuration = {
       // },
     }),
     new webpack.EnvironmentPlugin({ NODE_ENV: isDevelopment ? 'development' : 'production' }),
+    new webpack.ProvidePlugin({ React: 'react' }),
   ],
   output: {
     path: path.join(__dirname, 'dist'),
@@ -82,6 +83,9 @@ const config: webpack.Configuration = {
         changeOrigin: true,
       },
     },
+  },
+  externals: {
+    React: 'react',
   },
 };
 

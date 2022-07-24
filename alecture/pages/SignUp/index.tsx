@@ -7,7 +7,7 @@ import useSWR from 'swr';
 import { Button, Error, Form, Header, Input, Label, LinkContainer, Success } from './styles';
 
 const SignUp: FC = () => {
-  const { data, error, isValidating } = useSWR('http://localhost:3095/api/users', fetcher);
+  const { data, error, isValidating } = useSWR('/api/users', fetcher);
 
   const [email, onChangeEmail] = useInput('');
   const [nickname, onChangeNickname] = useInput('');

@@ -9,7 +9,7 @@ import useSWR from 'swr';
 
 const LogIn: FC = () => {
   // ! swr을 통해 로그인되어 있는 사용자라면, 로그인된 사용자의 정보 요청하기
-  const { data, error, isValidating, mutate } = useSWR('http://localhost:3095/api/users', fetcher);
+  const { data, error, isValidating, mutate } = useSWR('/api/users', fetcher);
 
   const [logInError, setLogInError] = useState(false);
   const [email, onChangeEmail] = useInput('');
@@ -22,7 +22,7 @@ const LogIn: FC = () => {
       axios
         .post(
           // '/api/users/login',
-          'http://localhost:3095/api/users/login',
+          '/api/users/login',
           { email, password },
           {
             withCredentials: true,

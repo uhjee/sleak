@@ -24,7 +24,7 @@ const CreateChannelModal: FC<CreateChannelModalProps> = ({ onCloseModal, show = 
   /**
    * [swr] userData 받아오기
    */
-  const { data: userData } = useSWR<IUser | false>('http://localhost:3095/api/users', fetcher, {
+  const { data: userData } = useSWR<IUser | false>('/api/users', fetcher, {
     dedupingInterval: 2000,
     loadingTimeout: 900000,
   });
@@ -34,7 +34,7 @@ const CreateChannelModal: FC<CreateChannelModalProps> = ({ onCloseModal, show = 
    * 조건부 요청: userData 가 없다면, null로 요청
    */
   const { data: channelData, mutate: mutateChannelData } = useSWR<IChannel[]>(
-    userData ? `http://localhost:3095/api/workspaces/${workspace}/channels` : null,
+    userData ? `/api/workspaces/${workspace}/channels` : null,
     fetcher,
   );
 

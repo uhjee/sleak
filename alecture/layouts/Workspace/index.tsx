@@ -1,4 +1,6 @@
+import ChannelList from '@components/ChannelList';
 import CreateChannelModal from '@components/CreateChannelModal';
+import DMList from '@components/DMList';
 import InviteChannelModal from '@components/InviteChannelModal';
 import InviteWorkspaceModal from '@components/InviteWorkspaceModal';
 import Menu from '@components/Menu';
@@ -18,7 +20,7 @@ import {
   WorkspaceModal,
   WorkspaceName,
   Workspaces,
-  WorkspaceWrapper
+  WorkspaceWrapper,
 } from '@layouts/Workspace/styles';
 import loadable from '@loadable/component';
 import { Button, Input, Label } from '@pages/SignUp/styles';
@@ -61,7 +63,7 @@ const Workspace: VFC = () => {
     data: userData,
     error,
     mutate,
-  } = useSWR<IUser | false>('http://localhost:3095/api/users', fetcher, {
+  } = useSWR<IUser | false>('/api/users', fetcher, {
     dedupingInterval: 2000,
     loadingTimeout: 900000,
   });
@@ -70,17 +72,20 @@ const Workspace: VFC = () => {
    * [swr] channelData 받아오기
    * 조건부 요청: userData 가 없다면, null로 요청
    */
-  const { data: channelData } = useSWR<IChannel[]>(
-    userData ? `http://localhost:3095/api/workspaces/${workspace}/channels` : null,
-    fetcher,
-  );
+  const { data: channelData } = useSWR<IChannel[]>(userData ? `/api/workspaces/${workspace}/channels` : null, fetcher);
+
+  /**
+   * [swr] workspace에 있는 멤버들 받아오기
+   * 조건부 요청: userData 가 없다면, null로 요청
+   */
+  const { data: memberData } = useSWR<IChannel[]>(userData ? `/api/workspaces/${workspace}/members` : null, fetcher);
 
   /**
    * 로그아웃 버튼 클릭 핸들러
    */
   const onLogout = useCallback(() => {
     axios
-      .post('http://localhost:3095/api/users/logout', null, {
+      .post('/api/users/logout', null, {
         withCredentials: true,
       })
       .then((response) => {
@@ -135,7 +140,7 @@ const Workspace: VFC = () => {
 
       try {
         const { data } = await axios.post<IWorkspace>(
-          'http://localhost:3095/api/workspaces',
+          '/api/workspaces',
           {
             workspace: newWorkspace,
             url: newUrl,
@@ -224,9 +229,10 @@ const Workspace: VFC = () => {
                 <button onClick={onLogout}>로그아웃</button>
               </WorkspaceModal>
             </Menu>
-            {channelData?.map((channel) => (
-              <div key={channel.id}>{channel.name}</div>
-            ))}
+            {/* 채널 리스트 */}
+            <ChannelList />
+            {/* DM 리스트 */}
+            <DMList />
           </MenuScroll>
         </Channels>
         <Chats>

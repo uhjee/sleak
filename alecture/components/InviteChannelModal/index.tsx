@@ -19,11 +19,10 @@ const InviteChannelModal: FC<InviteChannelModalProps> = ({ onCloseModal, setShow
   const [newMember, onChangeNewMember, setNewMember] = useInput('');
   const { workspace, channel } = useParams();
 
-  
   /**
    * [swr] userData 받아오기
    */
-  const { data: userData } = useSWR<IUser | false>('http://localhost:3095/api/users', fetcher, {
+  const { data: userData } = useSWR<IUser | false>('/api/users', fetcher, {
     dedupingInterval: 2000,
     loadingTimeout: 900000,
   });
@@ -32,7 +31,7 @@ const InviteChannelModal: FC<InviteChannelModalProps> = ({ onCloseModal, setShow
    * 특정 channel의 멤버들을 조회한다.
    */
   const { mutate: mutateMembers } = useSWR<IUser[]>(
-    userData ? `http://localhost:3095/api/workspaces/${workspace}/channels/${channel}/members` : null,
+    userData ? `/api/workspaces/${workspace}/channels/${channel}/members` : null,
     fetcher,
   );
 
@@ -43,7 +42,7 @@ const InviteChannelModal: FC<InviteChannelModalProps> = ({ onCloseModal, setShow
 
       try {
         await axios.post(
-          `http://localhost:3095/api/workspaces/${workspace}/channels/${channel}/members`,
+          `/api/workspaces/${workspace}/channels/${channel}/members`,
           {
             email: newMember,
           },

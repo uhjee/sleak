@@ -26,7 +26,7 @@ const InviteWorkspaceModal: FC<InviteWorkspaceModalProps> = ({
   /**
    * [swr] userData 받아오기
    */
-  const { data: userData } = useSWR<IUser | false>('http://localhost:3095/api/users', fetcher, {
+  const { data: userData } = useSWR<IUser | false>('/api/users', fetcher, {
     dedupingInterval: 2000,
     loadingTimeout: 900000,
   });
@@ -35,7 +35,7 @@ const InviteWorkspaceModal: FC<InviteWorkspaceModalProps> = ({
    * 특정 workspace의 멤버들을 가져온다.
    */
   const { mutate: mutateWorkspaceMembers } = useSWR<IUser[]>(
-    userData ? `http://localhost:3095/api/workspaces/${workspace}/members` : null,
+    userData ? `/api/workspaces/${workspace}/members` : null,
     fetcher,
   );
 
@@ -48,7 +48,7 @@ const InviteWorkspaceModal: FC<InviteWorkspaceModalProps> = ({
 
       try {
         await axios.post(
-          `http://localhost:3095/api/workspaces/${workspace}/members`,
+          `/api/workspaces/${workspace}/members`,
           {
             email: newMember,
           },
