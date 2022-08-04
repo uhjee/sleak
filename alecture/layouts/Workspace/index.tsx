@@ -6,6 +6,7 @@ import InviteWorkspaceModal from '@components/InviteWorkspaceModal';
 import Menu from '@components/Menu';
 import Modal from '@components/Modal';
 import useInput from '@hooks/useInput';
+import useSocket from '@hooks/useSocket';
 import {
   AddButton,
   Channels,
@@ -28,7 +29,7 @@ import { IChannel, IUser, IWorkspace } from '@typings/db';
 import fetcher from '@utils/fetcher';
 import axios from 'axios';
 import gravatar from 'gravatar';
-import React, { FormEvent, MouseEvent, useCallback, useState, VFC } from 'react';
+import React, { FormEvent, MouseEvent, useCallback, useEffect, useState, VFC } from 'react';
 import { Route, Routes, useNavigate, useParams } from 'react-router';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -79,6 +80,14 @@ const Workspace: VFC = () => {
    * 조건부 요청: userData 가 없다면, null로 요청
    */
   const { data: memberData } = useSWR<IChannel[]>(userData ? `/api/workspaces/${workspace}/members` : null, fetcher);
+
+  const [socket, disconnect] = useSocket(workspace);
+
+  useEffect(() => {
+    socket.on('message');
+    socket.emit();
+    disconnect();
+  });
 
   /**
    * 로그아웃 버튼 클릭 핸들러
