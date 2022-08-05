@@ -13,6 +13,7 @@ const App = () => {
       <Route path="/login" element={<LogIn />} />
       <Route path="/signup" element={<SignUp />} />
       {/* nested routing을 위해 와일드카드 사용 */}
+      <Route path="/workspace/:workspace/channel/:channel" element={<Workspace />} />
       <Route path="/workspace/:workspace/*" element={<Workspace />} />
       <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>

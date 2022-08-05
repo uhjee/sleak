@@ -81,13 +81,20 @@ const Workspace: VFC = () => {
    */
   const { data: memberData } = useSWR<IChannel[]>(userData ? `/api/workspaces/${workspace}/members` : null, fetcher);
 
-  const [socket, disconnect] = useSocket(workspace);
+  const [socket, disconnect] = useSocket(workspace as string);
+
+  // websocket 이벤트 발행
+  useEffect(() => {
+    if (channelData && userData && socket) {
+      socket.emit('login', { id: userData.id, channels: channelData.map((channel) => channel.id) });
+    }
+  });
 
   useEffect(() => {
-    socket.on('message');
-    socket.emit();
-    disconnect();
-  });
+    return () => {
+      disconnect();
+    };
+  }, [workspace, disconnect]);
 
   /**
    * 로그아웃 버튼 클릭 핸들러
@@ -245,6 +252,7 @@ const Workspace: VFC = () => {
           </MenuScroll>
         </Channels>
         <Chats>
+          {/* ROUTES */}
           <Routes>
             <Route path="/channel/:channel" element={<Channel />} />
             <Route path="/dm/:id" element={<DirectMessage />} />

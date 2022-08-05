@@ -3,8 +3,17 @@ import { useCallback } from 'react';
 
 const backUrl = 'http://localhost:3095';
 
+// socket을 local로 갖고 있기 위한 변수
 const sockets: { [key: string]: SocketIOClient.Socket } = {};
-const useSocket = (workspace: string) => {
+
+/**
+ * 소켓 객체를 만들어 반환한다.
+ *
+ * @param   {string[]}        workspace  [workspace description]
+ *
+ * @return  {SocketIOClient, () => void}             [return description]
+ */
+const useSocket = (workspace: string): [SocketIOClient.Socket | undefined, () => void] => {
   const disconnect = useCallback(() => {
     if (workspace) {
       sockets[workspace].disconnect();
@@ -14,7 +23,12 @@ const useSocket = (workspace: string) => {
 
   if (!workspace) return [undefined, disconnect];
 
-  sockets[workspace] = io.connect(`${backUrl}/ws-${workspace}`);
+  // single ton 으로 사용하기 위해
+  if (!sockets[workspace]) {
+    sockets[workspace] = io.connect(`${backUrl}/ws-${workspace}`, {
+      transports: ['websocket'], // HTTP 요청없이 websocket만 사용하도록 설정
+    });
+  }
   // // 이벤트 발행
   // sockets[workspace].emit('hello', 'world');
   // // 이벤트 구독
