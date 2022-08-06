@@ -38,6 +38,7 @@ const DMList: FC = () => {
     setOnlineList([]);
   }, [workspace]);
 
+  // socketIO을 통해 온라인된 사용자 id들 받아오기
   useEffect(() => {
     socket?.on('onlineList', (data: number[]) => {
       setOnlineList(data);
