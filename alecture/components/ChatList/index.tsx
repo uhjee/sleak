@@ -1,6 +1,7 @@
 import Chat from '@components/Chat';
 import { IDM } from '@typings/db';
-import React, { FC } from 'react';
+import React, { FC, useCallback, useRef } from 'react';
+import { Scrollbars } from 'react-custom-scrollbars';
 import { ChatZone, Section } from './styles';
 
 interface IProps {
@@ -8,13 +9,18 @@ interface IProps {
 }
 
 const ChatList: FC<IProps> = ({ chatData }) => {
+  const scrollbarRef = useRef(null);
+  const onScroll = useCallback(() => {}, []);
+
   return (
     <ChatZone>
-      <Section>
-        {chatData?.map((chat) => (
-          <Chat key={chat.id} data={chat} />
-        ))}
-      </Section>
+      <Scrollbars autoHide ref={scrollbarRef} onScrollFrame={onScroll}>
+        <Section>
+          {chatData?.map((chat) => (
+            <Chat key={chat.id} data={chat} />
+          ))}
+        </Section>
+      </Scrollbars>
     </ChatZone>
   );
 };

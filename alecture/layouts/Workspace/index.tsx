@@ -55,8 +55,7 @@ const Workspace: VFC = () => {
   const [showInviteWorkspaceModal, setShowInviteWorkspaceModal] = useState(false);
   const [showInviteChannelModal, setShowInviteChannelModal] = useState(false);
 
-  const { workspace } = useParams();
-
+  const { workspace } = useParams<{ workspace: string }>();
   /**
    * [swr] userData 받아오기
    */
@@ -79,7 +78,7 @@ const Workspace: VFC = () => {
    * [swr] workspace에 있는 멤버들 받아오기
    * 조건부 요청: userData 가 없다면, null로 요청
    */
-  const { data: memberData } = useSWR<IChannel[]>(userData ? `/api/workspaces/${workspace}/members` : null, fetcher);
+  const { data: memberData } = useSWR<IUser[]>(userData ? `/api/workspaces/${workspace}/members` : null, fetcher);
 
   const [socket, disconnect] = useSocket(workspace as string);
 
