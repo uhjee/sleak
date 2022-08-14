@@ -15,4 +15,9 @@ export const ChatWrapper = styled.div`
       height: 36px;
     }
   }
+  .chat-mention {
+    color: #11a489;
+    font-size: 20px;
+    text-decoration: none;
+  }
 `;

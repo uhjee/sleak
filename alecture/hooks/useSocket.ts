@@ -35,7 +35,7 @@ const useSocket = (workspace: string): [SocketIOClient.Socket | undefined, () =>
   // sockets[workspace].on('message', (data) => {});
   // // socket.disconnect(); // 연결 해제
 
-  console.log(`연결된 소켓(workspace) map:: ${Object.keys(sockets)}`);
+  // console.log(`연결된 소켓(workspace) map:: ${Object.keys(sockets)}`);
   return [sockets[workspace], disconnect];
 };
 

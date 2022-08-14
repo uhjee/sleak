@@ -25,7 +25,7 @@ const Chat: FC<IProps> = ({ data }) => {
           const arr: string[] | null = match.match(/@\[(.+?)]\((\d+?)\)/)!;
           if (arr) {
             return (
-              <Link key={match + index} to={`/workspace/${workspace}/dm/${arr[2]}`}>
+              <Link className="chat-mention" key={match + index} to={`/workspace/${workspace}/dm/${arr[2]}`}>
                 @{arr[1]}
               </Link>
             );
